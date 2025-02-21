@@ -48,7 +48,7 @@ class BookFactory extends Factory
             $authorname = $this->faker->name;
             $author = Author::firstOrCreate(
                 ['name' => $authorname],
-                ['bio' => $this->generateSentence(rand(45, 60)), 'author_pfp' => $this->getRandomImage("authors")]
+                ['bio' => $this->generateSentence(rand(45, 60)), 'author_pfp' => $this->getRandomImage("authors") , 'user_id' => User::inRandomOrder()->first()->id]
             );
             $book->authors()->attach($author->id);
 
@@ -67,6 +67,7 @@ class BookFactory extends Factory
                 Comment::create([
                     'book_id' => $book->id,
                     'comment' => $this->generateSentence(rand(10, 50)),
+                    'user_id' => User::inRandomOrder()->first()->id
                 ]);
             }
 
