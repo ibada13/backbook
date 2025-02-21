@@ -67,18 +67,10 @@ class CommentController extends Controller
 
     
 
-public function deletecomment(Request $request)
+public function deletecomment(Request $request , $id)
 {
-    $rules = [
-        "id" => "required|integer|min:1",
-    ];
+  
 
-    $validator = Validator::make($request->all(), $rules);
-    if ($validator->fails()) {
-        return response()->json(["error" => $validator->errors()], 400);
-    }
-
-    $id = $request->input('id');
     $user = auth()->user();
     
     $comment = Comment::find($id);
@@ -101,5 +93,26 @@ public function deletecomment(Request $request)
         ], 500);
     }
 }
+public function update(Request $request, $id)
+{
+    // Validate input
+    $request->validate([
+        'comment' => 'required|string|max:500',
+    ]);
 
+    $comment = Comment::find($id);
+
+    if (!$comment) {
+        return response()->json(['error' => 'Comment not found'], 404);
+    }
+
+    if (auth()->user()->id !== $comment->user_id) {
+        return response()->json(['error' => 'Unauthorized'], 403);
+    }
+
+    $comment->comment = $request->comment;
+    $comment->save();
+
+    return response()->json(['message' => 'Comment updated successfully', 'comment' => $comment], 200);
+}
 }

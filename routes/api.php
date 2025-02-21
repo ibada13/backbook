@@ -15,4 +15,6 @@ Route::get('/book' , [BookController::class , 'getBook']);
 
 Route::get('/comments' , [CommentController::class , 'getcommentsforbook']);
 Route::post('/comments' , [CommentController::class , 'postcomment']);
-Route::delete('/comments' , [CommentController::class , 'deletecomment']);
+Route::delete('/comments/{id}' , [CommentController::class , 'deletecomment']);
+Route::put('/comments/{id}' , [CommentController::class , 'update']);
+
