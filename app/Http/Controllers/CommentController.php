@@ -50,6 +50,7 @@ class CommentController extends Controller
     $user = auth()->user();
 
     $comments = Comment::where("book_id", $book_id)
+        ->with('user:id,name')
         ->orderBy("created_at", "desc")
         ->paginate(6);
 
