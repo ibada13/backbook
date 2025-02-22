@@ -12,6 +12,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 Route::get('/books' , [BookController::class , 'getBooks']);
 Route::get('/book' , [BookController::class , 'getBook']);
+Route::post('/book' , [BookController::class , 'postbook']);
 Route::post('/book/start-reading/{id}' , [BookController::class , 'startReadingBook']);
 Route::put('/book/{id}/update-pages' , [BookController::class , 'updatePagesRead']);
 
