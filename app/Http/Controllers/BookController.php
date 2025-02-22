@@ -194,6 +194,36 @@ return response()->json($booksArray, 200);
 
     return response()->json(["message" => "Book added to reading list"], 201);
 }
+public function updatePagesRead(Request $request, $id)
+{
+    $user = auth()->user();
+
+    if (!$user) {
+        return response()->json(["error" => "Unauthorized"], 401);
+    }
+
+    $book = Book::find($id);
+    if (!$book) {
+        return response()->json(["error" => "Book not found"], 404);
+    }
+
+    $request->validate([
+        'pages' => 'required|integer|min:0|max:' . $book->pages,
+    ]);
+
+    if (!$user->readingBooks()->where('book_id', $id)->exists()) {
+        return response()->json(["error" => "Book not in reading list"], 400);
+    }
+
+    $user->readingBooks()->updateExistingPivot($id, ['pages' => $request->pages]);
+
+    return response()->json([
+        "message" => "Pages updated successfully",
+        "book_id" => $id,
+        "pages_read" => $request->pages
+    ], 200);
+}
+
 
 }
 
