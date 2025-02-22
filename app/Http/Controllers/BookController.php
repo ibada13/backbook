@@ -16,6 +16,7 @@ class BookController extends Controller
     $id = $request->input("id");
 
     $book = Book::with(['authors:id,name', 'types:id,name'])->find($id);
+    $user = auth()->user();
 
     if (!$book) {
         return response()->json(["error" => "Book not found"], 404);
@@ -23,6 +24,14 @@ class BookController extends Controller
     if ($book->cover_path) {
         $book->cover_path = asset("images/books/{$book->cover_path}");
     }
+    $book->is_owner = $user && $book->user_id == $user->id;
+
+    
+    
+    $book->pages_read = $user 
+    ? $user->readingBooks()->where('book_user.book_id', $book->id)->value('book_user.pages') 
+    : null;
+
 
     // $comments = Comment::where('book_id', $book->id)
     //     ->orderBy('created_at', 'desc')
@@ -165,5 +174,26 @@ return response()->json($booksArray, 200);
         $type_id = $request->input('type_id');
         $type = Type::with('books')->find($type_id);
     }
+
+
+    public function startReadingBook(Request $request , $id)
+{
+    $user = auth()->user();
+   
+
+    if (!$user) {
+        return response()->json(["error" => "Unauthorized"], 401);
+    }
+
+    $book = Book::find($id);
+    if (!$book) {
+        return response()->json(["error" => "Book not found"], 404);
+    }
+
+    $user->readingBooks()->syncWithoutDetaching([$id]);
+
+    return response()->json(["message" => "Book added to reading list"], 201);
+}
+
 }
 
