@@ -15,6 +15,7 @@ Route::get('/book' , [BookController::class , 'getBook']);
 Route::post('/book' , [BookController::class , 'postbook']);
 Route::post('/book/start-reading/{id}' , [BookController::class , 'startReadingBook']);
 Route::put('/book/{id}/update-pages' , [BookController::class , 'updatePagesRead']);
+Route::get('/book/pending' , [BookController::class , 'Get_PENDING_Books'])->middleware('citizen');
 
 Route::get('/comments' , [CommentController::class , 'getcommentsforbook']);
 Route::post('/comments' , [CommentController::class , 'postcomment']);
