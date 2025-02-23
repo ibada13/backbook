@@ -22,8 +22,9 @@ return new class extends Migration
 
             $table->integer('published_year')->nullable();
             $table->string('cover_path')->nullable();
+            $table->tinyInteger('status')->default(1);
             $table->integer('pages');
-            $table->integer('current_page_number')->default(0);
+            // $table->integer('current_page_number')->default(0);
             $table->timestamps();
         });
     }

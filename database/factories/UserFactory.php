@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-
+use App\Models\User;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
@@ -29,9 +29,20 @@ class UserFactory extends Factory
             'email_verified_at' => now(), // Mark email as verified by default
             'password' => Hash::make('password'), // Use a consistent test password
             'remember_token' => Str::random(10),
+            'Role'=>$this->assignRole(),
         ];
+    }private function assignRole()
+    {
+        $random = rand(1, 100);
+
+        if ($random <= 94) {
+            return User::ROLE_SLAVE;
+        } elseif ($random <= 98) {
+            return User::ROLE_CITIZEN;
+        } else { 
+            return User::ROLE_KING;
+        }
     }
-    
 
     /**
      * Indicate that the model's email address should be unverified.

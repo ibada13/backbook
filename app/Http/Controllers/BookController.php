@@ -77,9 +77,10 @@ class BookController extends Controller
 
     $limit = $request->input('limit', 10);
 
-    $books = Book::select('id', 'title', 'cover_path')
+    $books = Book::where('status',Book::STATUS_APPROVED)
+    ->select('id', 'title', 'cover_path')
     ->withCount('comments')
-    ->orderBy('created_at', 'desc')
+    ->latest()
     ->paginate($limit, ['*'], 'page', $page);
 
 $books->transform(function ($book) {

@@ -11,6 +11,10 @@ class Book extends Model
 {
     use HasFactory; 
     // protected $table="books";
+    const STATUS_PENDING_APPROVAL = 1;
+    const STATUS_APPROVED = 2;
+    const STATUS_PENDING_DELETION = 3;
+    const STATUS_DELETED = 4;
     protected $fillable = [
         'user_id',
         'title',
@@ -20,7 +24,7 @@ class Book extends Model
         'published_year',
         'pages',
         'cover_path',
-        'current_page_number'
+        'status'
     ];
 
     public function creator(){

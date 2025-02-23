@@ -22,19 +22,17 @@ class BookFactory extends Factory
      */
     public function definition(): array
     {
-        // Generate a random number of pages for the book
         $pages = $this->faker->numberBetween(150, 1200);
 
-        // Create a random book with the faker data
         return [
-            'user_id' => User::inRandomOrder()->first()->id, // Assign a random user to the book
+            'user_id' => User::inRandomOrder()->first()->id,
             'title' => $this->faker->sentence(3),
             'isbn' => $this->faker->isbn13,
             'description' => $this->faker->boolean() ? $this->generateSentence(rand(45, 60)) : null,   
             'published_year' => $this->faker->year(),
             'pages' => $pages,
             'cover_path' => $this->getRandomImage("books"),
-            'current_page_number' => $this->faker->numberBetween(0, $pages),
+            'status'=>$this->faker->boolean()?Book::STATUS_APPROVED:Book::STATUS_PENDING_APPROVAL
         ];
     }
 

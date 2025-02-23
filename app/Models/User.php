@@ -33,6 +33,23 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+    const ROLE_SLAVE = 3;
+    const ROLE_CITIZEN = 2;
+    const ROLE_KING = 1;
+
+    public function isKing()
+    {
+        return $this->role === self::ROLE_KING;
+    }
+
+    public function isCitizen()
+    {
+        return $this->role === self::ROLE_CITIZEN;
+    }
+    public function isSlave()
+    {
+        return $this->role === self::ROLE_SLAVE;
+    }
     public function books()
     {
         return $this->hasMany(Book::class);
