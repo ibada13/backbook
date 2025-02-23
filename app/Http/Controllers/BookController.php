@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Book;
-use App\Models\Comment;
 use App\Models\User;
 use App\Http\Requests\GetBookRequest;
 use App\Models\Author;
@@ -128,68 +127,72 @@ return response()->json($booksArray, 200);
         }
     }
 
+   
     
     public function postbook(Request $request)
-{
-    $rules = [
-        "title" => "required|string|max:16",
-        "description" => "nullable|string|max:100",
-        "authors" => "required|string",
-        "types" => "required|string",
-        "published_year" => "nullable|integer|digits:4",
-        "isbn" => "nullable|string|max:20",
-        "pages" => "required|integer|min:1",
-    ];
-
-    $validator = Validator::make($request->all(), $rules);
-    if ($validator->fails()) {
-        return response()->json(["error" => $validator->errors()], 422);
-    }
-
-    $user = auth()->user();
-    if (!$user) {
-        return response()->json(["error" => "Unauthorized"], 401);
-    }
-
-    $validatedData = $request->only(['title', 'description', 'pages', 'published_year']);
-    $validatedData['isbn'] = $request->isbn ?? (string) rand(1000000000, 9999999999);
-    $validatedData['user_id'] = $user->id; 
-
-    $book = Book::create($validatedData);
-
-    $authorNames = explode('*', $request->authors);
-    $authorIds = [];
-
-    foreach ($authorNames as $authorName) {
-        $authorName = trim($authorName);
-        if (!empty($authorName)) {
-            $author = Author::firstOrCreate(["name" => $authorName]);
+    {
+        $rules = [
+            "title" => "required|string|max:16",
+            "description" => "nullable|string|max:100",
+            "authors" => "required|string",
+            "types" => "required|string",
+            "published_year" => "nullable|integer|digits:4",
+            "isbn" => "nullable|string|max:20",
+            "pages" => "required|integer|min:1",
+            "cover_path" => "nullable|file|image|max:8192",
+        ];
+    
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return response()->json(["error" => $validator->errors()], 422);
+        }
+    
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(["error" => "Unauthorized"], 401);
+        }
+    
+        
+        
+        if ($request->hasFile('cover_path')) {
+            $file = $request->file('cover_path');
+            
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            
+            $file->move(public_path('images/books'), $filename);
+        
+         
+        }
+        
+        
+    
+        $validatedData = $request->only(['title', 'description', 'pages', 'published_year']);
+        $validatedData['isbn'] = $request->isbn ?? (string) rand(1000000000, 9999999999);
+        $validatedData['user_id'] = $user->id; 
+        $validatedData['cover_path'] = $filename;
+        $book = Book::create($validatedData);
+    
+        
+        $authorNames = explode('*', $request->authors);
+        $authorIds = [];
+        foreach ($authorNames as $authorName) {
+            $author = Author::firstOrCreate(["name" => trim($authorName)]);
             $authorIds[] = $author->id;
         }
-    }
-
-    if (!empty($authorIds)) {
         $book->authors()->attach($authorIds);
-    }
-
-    $typeNames = explode('*', $request->types);
-    $typeIds = [];
-
-    foreach ($typeNames as $typeName) {
-        $typeName = trim($typeName);
-        if (!empty($typeName)) {
-            $type = Type::firstOrCreate(["name" => $typeName]);
+    
+      
+        $typeNames = explode('*', $request->types);
+        $typeIds = [];
+        foreach ($typeNames as $typeName) {
+            $type = Type::firstOrCreate(["name" => trim($typeName)]);
             $typeIds[] = $type->id;
         }
-    }
-
-    if (!empty($typeIds)) {
         $book->types()->attach($typeIds);
+    
+        return response()->json(["book_id" => $book->id], 201);
     }
-
-    return response()->json(["book_id" => $book->id], 201);
-}
-
+    
     public function get_books_from_type_id(Request $request){
         $validator = Validator::make($request->all( ),[
             "type_id"=>"integer|required|min:1|exists:types,id"
