@@ -64,6 +64,7 @@ class BookFactory extends Factory
                 $book->readers()->attach($user->id, [
                     'pages' => rand(0, $book->pages),
                 ]);
+                $book->favoritedByUsers()->attach($user->id);
             }
 
             $book->update([
