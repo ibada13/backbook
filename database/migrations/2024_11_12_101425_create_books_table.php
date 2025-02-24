@@ -19,7 +19,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('isbn')->unique()->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-
+            $table->unsignedBigInteger('readers_count')->default(0);
+            $table->unsignedBigInteger('favorited_count')->default(0);
             $table->integer('published_year')->nullable();
             $table->string('cover_path')->nullable();
             $table->tinyInteger('status')->default(1);

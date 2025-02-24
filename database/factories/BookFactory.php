@@ -15,11 +15,6 @@ class BookFactory extends Factory
 {
     protected $model = Book::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         $pages = $this->faker->numberBetween(150, 1200);
@@ -28,29 +23,25 @@ class BookFactory extends Factory
             'user_id' => User::inRandomOrder()->first()->id,
             'title' => $this->faker->sentence(3),
             'isbn' => $this->faker->isbn13,
-            'description' => $this->faker->boolean() ? $this->generateSentence(rand(45, 60)) : null,   
+            'description' => $this->faker->boolean() ? $this->generateSentence(rand(45, 60)) : null,
             'published_year' => $this->faker->year(),
             'pages' => $pages,
             'cover_path' => $this->getRandomImage("books"),
-            'status'=>$this->faker->boolean()?Book::STATUS_APPROVED:Book::STATUS_PENDING_APPROVAL
+            'status' => $this->faker->boolean() ? Book::STATUS_APPROVED : Book::STATUS_PENDING_APPROVAL,
+
         ];
     }
 
-    /**
-     * Attach random users, authors, and types after creating the book.
-     */
     public function configure()
     {
         return $this->afterCreating(function (Book $book) {
-            // Attach random author to the book
             $authorname = $this->faker->name;
             $author = Author::firstOrCreate(
                 ['name' => $authorname],
-                ['bio' => $this->generateSentence(rand(45, 60)), 'author_pfp' => $this->getRandomImage("authors") , 'user_id' => User::inRandomOrder()->first()->id]
+                ['bio' => $this->generateSentence(rand(45, 60)), 'author_pfp' => $this->getRandomImage("authors"), 'user_id' => User::inRandomOrder()->first()->id]
             );
             $book->authors()->attach($author->id);
 
-            // Attach random types to the book
             $types = ['فلسفة', 'رواية', 'شعر', 'فانتازيا', 'خيال علمي', 'مغامرة', 'تاريخ', 'ديني', 'تراجيدي', 'فكاهي', 'سيرة', 'رعب', 'سياسة', 'حرب'];
             $typesToAttach = [];
             for ($i = 0; $i < 3; $i++) {
@@ -60,7 +51,6 @@ class BookFactory extends Factory
             }
             $book->types()->syncWithoutDetaching($typesToAttach);
 
-            // Attach random comments to the book
             for ($commentid = 0; $commentid < rand(0, 5); $commentid++) {
                 Comment::create([
                     'book_id' => $book->id,
@@ -69,19 +59,20 @@ class BookFactory extends Factory
                 ]);
             }
 
-            // Attach random readers to the book (users reading the book with random pages read)
             $users = \App\Models\User::inRandomOrder()->take(rand(1, 5))->get();
             foreach ($users as $user) {
                 $book->readers()->attach($user->id, [
-                    'pages' => rand(0, $book->pages),  // Attach a random number of pages read
+                    'pages' => rand(0, $book->pages),
                 ]);
             }
+
+            $book->update([
+                'readers_count' => $book->readers()->count(),
+                'favorited_count' => $book->favoritedByUsers()->count(),
+            ]);
         });
     }
 
-    /**
-     * Helper function to generate a random sentence in Arabic
-     */
     private function generateSentence($numWords)
     {
         $words = [
@@ -96,13 +87,10 @@ class BookFactory extends Factory
             "سمك", "فاكهة", "خضروات", "حديقة", "طبيعة", "صحراء", "واحة", "نخيل", "زهور", "رمال",
             "صقر", "نسر", "غيمة", "سماء", "رعد", "برق", "جسر", "صخور", "كهف", "غرفة"
         ];
-        shuffle($words); 
+        shuffle($words);
         return implode(" ", array_slice($words, 0, $numWords)) . ".";
     }
 
-    /**
-     * Helper function to get a random image path from a folder
-     */
     private function getRandomImage($folder)
     {
         $imageDirectory = public_path("images/{$folder}");

@@ -16,7 +16,7 @@ class CitizenMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check() || Auth::user()->role !== User::ROLE_CITIZEN) {
+        if (!Auth::check() || Auth::user()->isSlave()) {
             abort(403, 'Forbidden');
         }
     

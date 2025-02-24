@@ -24,7 +24,9 @@ class Book extends Model
         'published_year',
         'pages',
         'cover_path',
-        'status'
+        'status',
+        'readers_count',
+        'favorited_count',
     ];
 
     public function creator(){
@@ -40,6 +42,12 @@ class Book extends Model
             }
         });
     }
+
+public function favoritedByUsers()
+{
+    return $this->belongsToMany(User::class, 'user_favorites', 'book_id', 'user_id')->withTimestamps();
+}
+
     public function comments(){
         return $this->hasMany(Comment::class);
     }
