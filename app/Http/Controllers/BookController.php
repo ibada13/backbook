@@ -141,8 +141,114 @@ return response()->json($booksArray, 200);
 }
 
 
+public function Get_Reading_Books (Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        "id" => "integer|min:1",  
+        "limit" => "nullable|integer|min:10|max:20",
+    ]);
 
+    if ($validator->fails()) {
+        return response()->json(["error" => $validator->errors()], 422);
+    }
 
+    $page = $request->input('id', 1);
+
+    $limit = $request->input('limit', 10);
+    $user = auth()->user();
+    $books = $user->readingBooks()
+    ->where('status', Book::STATUS_APPROVED)
+    ->whereColumn('book_user.pages', '<', 'books.pages')
+    ->withCount('comments')
+    ->select('books.id', 'books.title', 'books.cover_path', 'book_user.pages')
+    ->latest()
+    ->paginate($limit, ['*'], 'page', $page);
+
+    $books->transform(function ($book) {
+        return [
+            'id' => $book->id,
+            'title' => $book->title,
+            'comments' => $book->comments_count > 0,
+            'cover_path' => $book->cover_path ? asset("images/books/{$book->cover_path}") : null,
+            'current_page' => $book->current_page,
+        ];
+    });
+
+    return response()->json($books);
+}
+public function Get_Readed_Books (Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        "id" => "integer|min:1",  
+        "limit" => "nullable|integer|min:10|max:20",
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(["error" => $validator->errors()], 422);
+    }
+
+    $page = $request->input('id', 1);
+
+    $limit = $request->input('limit', 10);
+    $user = auth()->user();
+    $books = $user->readingBooks()
+    ->where('status', Book::STATUS_APPROVED)
+    ->whereColumn('book_user.pages', '=', 'books.pages')
+    ->withCount('comments')
+    ->select('books.id', 'books.title', 'books.cover_path', 'book_user.pages')
+    ->latest()
+    ->paginate($limit, ['*'], 'page', $page);
+
+    $books->transform(function ($book) {
+        return [
+            'id' => $book->id,
+            'title' => $book->title,
+            'comments' => $book->comments_count > 0,
+            'cover_path' => $book->cover_path ? asset("images/books/{$book->cover_path}") : null,
+            'current_page' => $book->current_page,
+        ];
+    });
+
+    return response()->json($books);
+}
+public function Get_Popular_Books(Request $request)
+{
+    
+    $validator = Validator::make($request->all(), [
+        "id" => "integer|min:1",  
+        "limit" => "integer|min:10|max:20",
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(["error" => $validator->errors()], 422);
+    }
+
+    $page = $request->input('id', 1);
+
+    $limit = $request->input('limit', 10);
+
+    $books = Book::where('status',Book::STATUS_APPROVED)
+    ->select('id', 'title', 'cover_path')
+    ->withCount('comments')
+    ->orderBy('favorited_count', 'desc')
+    ->limit(50)
+    ->paginate($limit, ['*'], 'page', $page);
+
+$books->transform(function ($book) {
+    return [
+        'id' => $book->id,
+        'title' => $book->title,
+        'comments' => $book->comments_count > 0,
+        'cover_path' => $book->cover_path ? asset("images/books/{$book->cover_path}") : null,
+    ];
+});
+
+$booksArray = $books->toArray();
+unset($booksArray['links']);
+
+return response()->json($booksArray, 200);
+
+}
     public function deletebook(Request $request){
         $validator = Validator::make($request->all(),[
             "id"=>"required|integer|exists:books,id",
