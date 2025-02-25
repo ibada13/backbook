@@ -20,7 +20,9 @@ Route::post('/book/{id}/save' , [BookController::class , 'saveit'])->middleware(
 Route::get('/books/pending' , [BookController::class , 'Get_PENDING_Books'])->middleware('citizen');
 Route::get('/books/read' , [BookController::class , 'Get_Reading_Books'])->middleware('auth:sanctum');
 Route::get('/books/readed' , [BookController::class , 'Get_Readed_Books'])->middleware('auth:sanctum');
+Route::get('/books/saved' , [BookController::class , 'Get_Saved_Books'])->middleware('auth:sanctum');
 Route::get('/books/popular' , [BookController::class , 'Get_Popular_Books']);
+Route::get('/books/favorite' , [BookController::class , 'Get_Favorited_Books'])->middleware('auth:sanctum');
 
 Route::get('/comments' , [CommentController::class , 'getcommentsforbook']);
 Route::post('/comments' , [CommentController::class , 'postcomment']);
