@@ -65,6 +65,7 @@ class BookFactory extends Factory
                     'pages' => rand(0, $book->pages),
                 ]);
                 $book->favoritedByUsers()->attach($user->id);
+                $book->savedByUsers()->attach($user->id);
             }
 
             $book->update([

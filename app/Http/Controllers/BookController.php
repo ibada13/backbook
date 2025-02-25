@@ -35,10 +35,12 @@ class BookController extends Controller
     $book->is_owner = $user && $book->user_id == $user->id;
 
     
-    
-    $book->pages_read = $user 
-    ? $user->readingBooks()->where('book_user.book_id', $book->id)->value('book_user.pages') 
-    : null;
+    if($user){
+
+        $book->pages_read = $user->readingBooks()->where('book_user.book_id', $book->id)->value('book_user.pages') ;
+        $book->saved= $user->savedBooks()->where('user_saves.book_id',$book->id)->exists();
+        $book->favorited = $user->favoriteBooks()->where('user_favorites.book_id',$book->id)->exists();
+    }
 
 
     // $comments = Comment::where('book_id', $book->id)
@@ -248,6 +250,36 @@ unset($booksArray['links']);
 
 return response()->json($booksArray, 200);
 
+}
+
+
+public function favoriteit(Request $request, $id) {
+    $book = Book::findOrFail($id);
+    $user = auth()->user();
+
+    $favorited = $user->favoriteBooks()->where('user_favorites.book_id', $book->id)->exists();
+
+    if ($favorited) {
+        $user->favoriteBooks()->detach($book->id);
+    } else {
+        $user->favoriteBooks()->attach($book->id);
+    }
+
+    return response()->json(['message' => $favorited ? 'Book unfavorited' : 'Book favorited']);
+}
+public function saveit(Request $request, $id) {
+    $book = Book::findOrFail($id);
+    $user = auth()->user();
+
+    $saved= $user->savedBooks()->where('user_saves.book_id',$book->id)->exists();
+
+    if ($saved) {
+        $user->savedBooks()->detach($book->id);
+    } else {
+        $user->savedBooks()->attach($book->id);
+    }
+
+    return response()->json(['message' => $saved ? 'Book unfavorited' : 'Book favorited']);
 }
     public function deletebook(Request $request){
         $validator = Validator::make($request->all(),[

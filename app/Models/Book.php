@@ -47,7 +47,10 @@ public function favoritedByUsers()
 {
     return $this->belongsToMany(User::class, 'user_favorites', 'book_id', 'user_id')->withTimestamps();
 }
-
+public function savedByUsers()
+{
+    return $this->belongsToMany(User::class, 'user_saves', 'book_id', 'user_id')->withTimestamps();
+}
     public function comments(){
         return $this->hasMany(Comment::class);
     }
