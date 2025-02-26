@@ -103,7 +103,6 @@ return response()->json($booksArray, 200);
 
 public function Get_PENDING_Books(Request $request)
 {
-    
     $validator = Validator::make($request->all(), [
         "id" => "integer|min:1",  
         "limit" => "integer|min:10|max:20",
@@ -114,32 +113,34 @@ public function Get_PENDING_Books(Request $request)
     }
 
     $page = $request->input('id', 1);
-
     $limit = $request->input('limit', 10);
 
     $books = Book::whereIn('status', [
         Book::STATUS_PENDING_APPROVAL,
         Book::STATUS_PENDING_DELETION
     ])
-    ->select('id', 'title', 'cover_path')
-    ->withCount('comments')
+    ->select('id', 'title', 'cover_path', 'user_id')
     ->latest()
     ->paginate($limit, ['*'], 'page', $page);
 
-$books->transform(function ($book) {
-    return [
-        'id' => $book->id,
-        'title' => $book->title,
-        'comments' => $book->comments_count > 0,
-        'cover_path' => $book->cover_path ? asset("images/books/{$book->cover_path}") : null,
-    ];
-});
+    $books->transform(function ($book) {
+        $bookpublisher = User::find($book->user_id);
+        
+        return [
+            'id' => $book->id,
+            'title' => $book->title,
+            'cover_path' => $book->cover_path ? asset("images/books/{$book->cover_path}") : null,
+            'publisher' => $bookpublisher ? [
+                'id' => $bookpublisher->id,
+                'name' => $bookpublisher->name
+            ] : null,
+        ];
+    });
 
-$booksArray = $books->toArray();
-unset($booksArray['links']);
+    $booksArray = $books->toArray();
+    unset($booksArray['links']);
 
-return response()->json($booksArray, 200);
-
+    return response()->json($booksArray, 200);
 }
 
 
