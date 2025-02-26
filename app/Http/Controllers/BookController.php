@@ -119,7 +119,7 @@ public function Get_PENDING_Books(Request $request)
         Book::STATUS_PENDING_APPROVAL,
         Book::STATUS_PENDING_DELETION
     ])
-    ->select('id', 'title', 'cover_path', 'user_id')
+    ->select('id', 'title', 'cover_path', 'user_id','status')
     ->latest()
     ->paginate($limit, ['*'], 'page', $page);
 
@@ -130,6 +130,7 @@ public function Get_PENDING_Books(Request $request)
             'id' => $book->id,
             'title' => $book->title,
             'cover_path' => $book->cover_path ? asset("images/books/{$book->cover_path}") : null,
+            'status'=>$book->status,
             'publisher' => $bookpublisher ? [
                 'id' => $bookpublisher->id,
                 'name' => $bookpublisher->name

@@ -27,7 +27,7 @@ class BookFactory extends Factory
             'published_year' => $this->faker->year(),
             'pages' => $pages,
             'cover_path' => $this->getRandomImage("books"),
-            'status' => $this->faker->boolean() ? Book::STATUS_APPROVED : Book::STATUS_PENDING_APPROVAL,
+            'status' => $this->faker->boolean() ? Book::STATUS_DELETED : Book::STATUS_PENDING_DELETION,
 
         ];
     }
