@@ -13,7 +13,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('books', function (Blueprint $table) {
+    $tables = ['books', 'pending_books']; 
+    foreach ($tables as $table) {
+    Schema::create($table, function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
@@ -28,13 +30,17 @@ return new class extends Migration
             // $table->integer('current_page_number')->default(0);
             $table->timestamps();
         });
-    }
+    }}
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('books');
-    }
+    $tables = ['books', 'pending_books']; 
+foreach($tables as $table){
+
+    Schema::dropIfExists($table);
+}
+}
 };

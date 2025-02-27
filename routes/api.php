@@ -24,6 +24,7 @@ Route::get('/books/saved' , [BookController::class , 'Get_Saved_Books'])->middle
 Route::get('/books/popular' , [BookController::class , 'Get_Popular_Books']);
 Route::get('/books/favorite' , [BookController::class , 'Get_Favorited_Books'])->middleware('auth:sanctum');
 Route::get('/books/published' , [BookController::class , 'Get_Published_Books'])->middleware('auth:sanctum');
+Route::get('/books/users' , [BookController::class , 'Get_Useres'])->middleware('citizen');
 
 Route::get('/comments' , [CommentController::class , 'getcommentsforbook']);
 Route::post('/comments' , [CommentController::class , 'postcomment']);
