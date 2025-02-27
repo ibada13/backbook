@@ -33,6 +33,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'user_pfp'
     ];
     const ROLE_SLAVE = 3;
     const ROLE_CITIZEN = 2;

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +25,7 @@ Route::get('/books/saved' , [BookController::class , 'Get_Saved_Books'])->middle
 Route::get('/books/popular' , [BookController::class , 'Get_Popular_Books']);
 Route::get('/books/favorite' , [BookController::class , 'Get_Favorited_Books'])->middleware('auth:sanctum');
 Route::get('/books/published' , [BookController::class , 'Get_Published_Books'])->middleware('auth:sanctum');
-Route::get('/books/users' , [BookController::class , 'Get_Useres'])->middleware('citizen');
+Route::get('/users' , [UserController::class , 'Get_Users'])->middleware('citizen');
 
 Route::get('/comments' , [CommentController::class , 'getcommentsforbook']);
 Route::post('/comments' , [CommentController::class , 'postcomment']);

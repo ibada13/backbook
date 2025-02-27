@@ -29,9 +29,20 @@ class UserFactory extends Factory
             'email_verified_at' => now(), // Mark email as verified by default
             'password' => Hash::make('password'), // Use a consistent test password
             'remember_token' => Str::random(10),
+            'user_pfp'=>$this->getRandomImage("users"),
             'Role'=>$this->assignRole(),
         ];
-    }private function assignRole()
+    }
+    private function getRandomImage($folder)
+    {
+        $imageDirectory = public_path("images/{$folder}");
+        $images = glob($imageDirectory . '/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
+        if (!$images || empty($images)) {
+            return null;
+        }
+        return basename($images[array_rand($images)]);
+    }
+    private function assignRole()
     {
         $random = rand(1, 100);
 
