@@ -26,7 +26,8 @@ Route::get('/books/popular' , [BookController::class , 'Get_Popular_Books']);
 Route::get('/books/favorite' , [BookController::class , 'Get_Favorited_Books'])->middleware('auth:sanctum');
 Route::get('/books/published' , [BookController::class , 'Get_Published_Books'])->middleware('auth:sanctum');
 Route::get('/users' , [UserController::class , 'Get_Users'])->middleware('citizen');
-
+Route::put('/books/{id}/accept_pending_book',[BookController::class , 'Accept_Pending_Book'])->middleware('citizen');
+Route::put('/books/{id}/decline-pending',[BookController::class , 'Decline_Pending_Book'])->middleware('citizen');
 Route::get('/comments' , [CommentController::class , 'getcommentsforbook']);
 Route::post('/comments' , [CommentController::class , 'postcomment']);
 Route::delete('/comments/{id}' , [CommentController::class , 'deletecomment']);

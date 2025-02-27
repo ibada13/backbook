@@ -181,6 +181,33 @@ public function Get_Reading_Books (Request $request)
     return response()->json($books);
 }
 
+public function Accept_Pending_Book(Request $request, $id)
+{
+    $book = Book::findOrFail($id);
+    $response = "Book was approved successfully";
+    if($book->status == Book::STATUS_PENDING_APPROVAL){
+
+        $book->status = Book::STATUS_APPROVED;
+    }else{
+        $book->status = Book::STATUS_DELETED;
+        $response = "Book was deleted successfully";
+    }
+    $book->save();
+
+    return response()->json(["response" => $response], 200); 
+}
+
+public function Decline_Pending_Book(Request $request, $id)
+{
+    $book = Book::findOrFail($id);
+    if($book->status == Book::STATUS_PENDING_DELETION){
+
+        $book->status = Book::STATUS_APPROVED;
+    }
+    $book->save();
+
+    return response()->json(["response" => "Book was declined successfully"], 200); 
+}
 
 public function Get_Popular_Books(Request $request)
 {
