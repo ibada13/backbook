@@ -35,6 +35,8 @@ class User extends Authenticatable
         'remember_token',
         'user_pfp'
     ];
+    const ROLE_Exciled= 5;
+    const ROLE_Ghost = 4;
     const ROLE_SLAVE = 3;
     const ROLE_CITIZEN = 2;
     const ROLE_KING = 1;
@@ -51,6 +53,13 @@ class User extends Authenticatable
     public function isSlave()
     {
         return $this->role === self::ROLE_SLAVE;
+    }
+    public function isExciled()
+    {
+        return $this->role === self::ROLE_Exciled;
+    }    public function isGhost()
+    {
+        return $this->role === self::ROLE_Ghost;
     }
     public function books()
     {

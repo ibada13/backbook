@@ -21,6 +21,9 @@ class EnsureEmailIsVerified
             ! $request->user()->hasVerifiedEmail())) {
             return response()->json(['message' => 'Your email address is not verified.'], 409);
         }
+        if($request->user()->isExciled()){
+            return response()->json(["message"=>"your account is banned"] ,409);
+        }
 
         return $next($request);
     }

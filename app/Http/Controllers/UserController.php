@@ -41,5 +41,12 @@ class UserController extends Controller
     
         return response()->json($users, 200);
     }
+
+    public function Ban_User(Request $request , $id){
+        $user = User::findOrFail($id);
+        $user->role = User::ROLE_Exciled ;
+        $user->save();
+        return response()->json(["message"=>"user was banned succefully"] );
+    }
     
 }
