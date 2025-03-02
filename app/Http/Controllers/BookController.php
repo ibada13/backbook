@@ -203,8 +203,10 @@ public function Decline_Pending_Book(Request $request, $id)
     if($book->status == Book::STATUS_PENDING_DELETION){
 
         $book->status = Book::STATUS_APPROVED;
+        $book->save();
+    }else{
+        $book->forceDelete();
     }
-    $book->save();
 
     return response()->json(["response" => "Book was declined successfully"], 200); 
 }

@@ -73,5 +73,11 @@ class UserController extends Controller
         $user->save();
         return response()->json(["message"=>"user was banned succefully"] );
     }
+    public function ModUser(Request $request , $id){
+        $user = User::findOrFail($id);
+        $user->role = User::ROLE_CITIZEN;
+        $user->save();
+        return response()->json(["message"=>"user was puted to mod succefuly" ] ,200);
+    }
     
 }
