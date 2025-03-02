@@ -14,8 +14,12 @@ Route::middleware(['auth:sanctum','citizen'])->group(function () {
     Route::put('/users/{id}/ban',[UserController::class , 'Ban_User']);
     Route::put('/books/{id}/accept_pending_book',[BookController::class , 'Accept_Pending_Book']);
     Route::put('/books/{id}/decline-pending',[BookController::class , 'Decline_Pending_Book']);
+    Route::get('/users' , [UserController::class , 'Get_Users']);
 });
+Route::middleware(['auth:sanctum' , 'king'])->group(function(){
+    Route::get('/mods' , [UserController::class , 'Get_Mods']);
 
+});
 Route::get('/books' , [BookController::class , 'getBooks']);
 Route::get('/book' , [BookController::class , 'getBook']);
 Route::post('/book' , [BookController::class , 'postbook']);
@@ -30,7 +34,6 @@ Route::get('/books/saved' , [BookController::class , 'Get_Saved_Books'])->middle
 Route::get('/books/popular' , [BookController::class , 'Get_Popular_Books']);
 Route::get('/books/favorite' , [BookController::class , 'Get_Favorited_Books'])->middleware('auth:sanctum');
 Route::get('/books/published' , [BookController::class , 'Get_Published_Books'])->middleware('auth:sanctum');
-Route::get('/users' , [UserController::class , 'Get_Users'])->middleware('citizen');
 // Route::put('/users/{id}/ghost');
 
 Route::get('/comments' , [CommentController::class , 'getcommentsforbook']);
