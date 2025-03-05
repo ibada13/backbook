@@ -3,6 +3,7 @@
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -43,6 +44,7 @@ Route::middleware(['auth:sanctum' ])->group(function(){
 
 Route::get('/books' , [BookController::class , 'getBooks']);
 Route::get('/book' , [BookController::class , 'getBook']);
+Route::get('/{id}/type' , [TypeController::class , 'GetType']);
 Route::get('/books/popular' , [BookController::class , 'Get_Popular_Books']);
 // Route::put('/users/{id}/ghost');
 
