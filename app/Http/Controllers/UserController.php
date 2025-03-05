@@ -75,7 +75,19 @@ class UserController extends Controller
     }
     public function ModUser(Request $request , $id){
         $user = User::findOrFail($id);
-        $user->role = User::ROLE_CITIZEN;
+        if($user->role === User::ROLE_CITIZEN){
+            $user->role = User::ROLE_SLAVE;
+        }else{
+            $user->role = User::ROLE_CITIZEN;
+
+        }
+        $user->save();
+        return response()->json(["message"=>"user was puted to mod succefuly" ] ,200);
+    }
+
+    public function AdminUser(Request $request , $id){
+        $user = User::findOrFail($id);
+        $user->role = User::ROLE_KING;
         $user->save();
         return response()->json(["message"=>"user was puted to mod succefuly" ] ,200);
     }

@@ -19,6 +19,7 @@ Route::middleware(['auth:sanctum','citizen'])->group(function () {
 Route::middleware(['auth:sanctum' , 'king'])->group(function(){
     Route::get('/mods' , [UserController::class , 'Get_Mods']);
     Route::put('/{id}/mod',[UserController::class , 'ModUser']);
+    Route::put('/{id}/admin',[UserController::class , 'AdminUser']);
 
 
 });
