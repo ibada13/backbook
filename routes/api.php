@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UserController;
@@ -43,8 +44,10 @@ Route::middleware(['auth:sanctum' ])->group(function(){
 });
 
 Route::get('/books' , [BookController::class , 'getBooks']);
-Route::get('/books/{id}/type' , [BookController::class , 'getBooksById']);
+Route::get('/books/{id}/type' , [BookController::class , 'getBooksByType']);
+Route::get('/books/{id}/author' , [BookController::class , 'getBooksByAuthor']);
 Route::get('/book' , [BookController::class , 'getBook']);
+Route::get('/{id}/author' , [AuthorController::class , 'GetAuthor']);
 Route::get('/{id}/type' , [TypeController::class , 'GetType']);
 Route::get('/books/popular' , [BookController::class , 'Get_Popular_Books']);
 // Route::put('/users/{id}/ghost');
