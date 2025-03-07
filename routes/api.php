@@ -43,6 +43,7 @@ Route::middleware(['auth:sanctum' ])->group(function(){
 });
 
 Route::get('/books' , [BookController::class , 'getBooks']);
+Route::get('/books/{id}/type' , [BookController::class , 'getBooksById']);
 Route::get('/book' , [BookController::class , 'getBook']);
 Route::get('/{id}/type' , [TypeController::class , 'GetType']);
 Route::get('/books/popular' , [BookController::class , 'Get_Popular_Books']);
