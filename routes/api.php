@@ -49,9 +49,11 @@ Route::middleware(['auth:sanctum' ])->group(function(){
 Route::get('/books' , [BookController::class , 'getBooks']);
 Route::get('/books/{id}/type' , [BookController::class , 'getBooksByType']);
 Route::get('/books/{id}/author' , [BookController::class , 'getBooksByAuthor']);
+Route::get('/books/{id}/user' , [BookController::class , 'getBooksByUser']);
 Route::get('/book' , [BookController::class , 'getBook']);
 Route::get('/{id}/author' , [AuthorController::class , 'GetAuthor']);
 Route::get('/{id}/type' , [TypeController::class , 'GetType']);
+Route::get('/{id}/user' , [UserController::class , 'getUserById']);
 Route::get('/books/popular' , [BookController::class , 'Get_Popular_Books']);
 // Route::put('/users/{id}/ghost');
 

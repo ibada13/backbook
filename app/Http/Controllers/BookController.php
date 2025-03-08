@@ -100,6 +100,46 @@ unset($booksArray['links']);
 return response()->json($booksArray, 200);
 
 }
+
+public function getBooksByUser(Request $request , $id)
+{
+    
+    $validator = Validator::make($request->all(), [
+        "id" => "integer|min:1",  
+        "limit" => "integer|min:10|max:20",
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(["error" => $validator->errors()], 422);
+    }
+
+    $page = $request->input('id', 1);
+
+    $limit = $request->input('limit', 10);
+
+    $user = user::find($id);
+    $books = $user->books()
+        ->where('status', Book::STATUS_APPROVED)
+        ->withCount('comments')
+        ->orderByDesc('favorited_count')
+        ->latest()
+        ->paginate($limit, ['*'], 'page', $page);
+
+$books->transform(function ($book) {
+    return [
+        'id' => $book->id,
+        'title' => $book->title,
+        'comments' => $book->comments_count > 0,
+        'cover_path' => $book->cover_path ? asset("images/books/{$book->cover_path}") : null,
+    ];
+});
+
+$booksArray = $books->toArray();
+unset($booksArray['links']);
+
+return response()->json($booksArray, 200);
+
+}
 public function getBooksByAuthor(Request $request , $id)
 {
     

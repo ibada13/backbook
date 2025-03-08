@@ -12,6 +12,24 @@ class UserController extends Controller
     {
         return response()->json($request->user());
     }
+
+
+public function getUserById(Request $request, $id)
+{
+    $user = User::find($id);
+
+    if (!$user) {
+        return response()->json(['message' => 'User not found'], 404);
+    }
+
+    return response()->json([
+        'name' => $user->name,
+        'role' => $user->role,
+        'user_pfp' => $user->user_pfp ? asset("images/users/{$user->user_pfp}") : null,
+
+    ]);
+}
+
     public function Get_Users(Request $request){
         // Validate request
         $validator = Validator::make($request->all(), [
@@ -41,6 +59,8 @@ class UserController extends Controller
     
         return response()->json($users, 200);
     }
+
+    
     public function Get_Mods(Request $request){
         $validator = Validator::make($request->all(), [
             "page" => "integer|min:1",  
