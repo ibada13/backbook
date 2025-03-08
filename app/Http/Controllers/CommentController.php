@@ -66,6 +66,29 @@ class CommentController extends Controller
 }
 
     
+public function ModDeleteComment(Request $request , $id)
+{
+  
+
+    
+    $comment = Comment::find($id);
+    
+    if (!$comment) {
+        return response()->json(["error" => "Comment not found"], 404);
+    }
+
+
+
+    try {
+        $comment->delete();
+        return response()->json(["message" => "Comment deleted successfully"], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            "error" => "An error occurred while deleting this comment",
+            "details" => $e->getMessage()
+        ], 500);
+    }
+}
 
 public function deletecomment(Request $request , $id)
 {

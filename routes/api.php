@@ -16,7 +16,10 @@ Route::middleware(['auth:sanctum','citizen'])->group(function () {
     Route::put('/users/{id}/ban',[UserController::class , 'Ban_User']);
     Route::put('/books/{id}/accept_pending_book',[BookController::class , 'Accept_Pending_Book']);
     Route::put('/books/{id}/decline-pending',[BookController::class , 'Decline_Pending_Book']);
+
     Route::get('/users' , [UserController::class , 'Get_Users']);
+    Route::delete('/mod/comments/{id}' , [CommentController::class , 'ModDeleteComment']);
+
 });
 Route::middleware(['auth:sanctum' , 'king'])->group(function(){
     Route::get('/mods' , [UserController::class , 'Get_Mods']);
