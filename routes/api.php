@@ -20,6 +20,7 @@ Route::middleware(['auth:sanctum','citizen'])->group(function () {
     Route::get('/users' , [UserController::class , 'Get_Users']);
     Route::delete('/mod/comments/{id}' , [CommentController::class , 'ModDeleteComment']);
     Route::put('/type/{id}' , [TypeController::class , 'update']);
+    Route::put('/author/{id}' , [AuthorController::class , 'update']);
 
 });
 Route::middleware(['auth:sanctum' , 'king'])->group(function(){
