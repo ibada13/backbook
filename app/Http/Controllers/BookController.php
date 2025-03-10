@@ -526,7 +526,71 @@ public function saveit(Request $request, $id) {
     }
 
    
-    
+    public function updateBook(Request $request, $id)
+{
+    $rules = [
+        "title" => "required|string|max:16",
+        "description" => "nullable|string|max:100",
+        "authors" => "required|string",
+        "types" => "required|string",
+        "published_year" => "nullable|integer|digits:4",
+        "isbn" => "nullable|string|max:20",
+        "pages" => "required|integer|min:1",
+        "cover_path" => "nullable|file|image|max:8192",
+    ];
+
+    $validator = Validator::make($request->all(), $rules);
+    if ($validator->fails()) {
+        return response()->json(["error" => $validator->errors()], 422);
+    }
+
+    $user = auth()->user();
+    if (!$user) {
+        return response()->json(["error" => "Unauthorized"], 401);
+    }
+
+    $book = Book::find($id);
+    if (!$book) {
+        return response()->json(["error" => "Book not found"], 404);
+    }
+
+    if ($book->user_id !== $user->id) {
+        return response()->json(["error" => "Forbidden"], 403);
+    }
+
+    if ($request->hasFile('cover_path')) {
+        $file = $request->file('cover_path');
+        $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path('images/books'), $filename);
+        $book->cover_path = $filename;
+    }
+
+    $book->title = $request->title;
+    $book->description = $request->description;
+    $book->pages = $request->pages;
+    $book->published_year = $request->published_year;
+    $book->isbn = $request->isbn ?? (string) rand(1000000000, 9999999999);
+    $book->save();
+
+    $authorNames = explode('*', $request->authors);
+    $authorIds = [];
+    foreach ($authorNames as $authorName) {
+        $author = Author::firstOrCreate(["name" => trim($authorName)]);
+        $authorIds[] = $author->id;
+    }
+    $book->authors()->sync($authorIds);
+
+    $typeNames = explode('*', $request->types);
+    $typeIds = [];
+    foreach ($typeNames as $typeName) {
+        $type = Type::firstOrCreate(["name" => trim($typeName)]);
+        $typeIds[] = $type->id;
+    }
+    $book->types()->sync($typeIds);
+
+    return response()->json(["message" => "Book updated successfully"], 200);
+}
+
     public function postbook(Request $request)
     {
         $rules = [
