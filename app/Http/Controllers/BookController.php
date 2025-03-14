@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Book;
@@ -528,6 +529,7 @@ public function saveit(Request $request, $id) {
    
     public function updateBook(Request $request, $id)
 {
+    Log::info('Request Data:', $request->all());
     $rules = [
         "title" => "required|string|max:16",
         "description" => "nullable|string|max:100",
