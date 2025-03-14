@@ -556,10 +556,6 @@ public function saveit(Request $request, $id) {
         return response()->json(["error" => "Book not found"], 404);
     }
 
-    if ($book->user_id !== $user->id) {
-        return response()->json(["error" => "Forbidden"], 403);
-    }
-
     if ($request->hasFile('cover_path')) {
         $file = $request->file('cover_path');
         $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
@@ -590,7 +586,7 @@ public function saveit(Request $request, $id) {
     }
     $book->types()->sync($typeIds);
 
-    return response()->json(["message" => "Book updated successfully"], 200);
+   return response()->json(["book_id" => $book->id], 201);
 }
 
     public function postbook(Request $request)
