@@ -17,7 +17,9 @@ class BookController extends Controller
     $id = $request->input("id");
 
     $book = Book::with(['authors:id,name', 'types:id,name'])->find($id);
-
+    if ($book->status != Book::STATUS_APPROVED && auth()->user()->role >2) {
+        return response()->json(["error" => "Book not found"], 404);
+    }
     $bookpublisher = User::where('id', $book->user_id)->first(); // Fetch the user
     
     if ($bookpublisher) {
@@ -499,37 +501,43 @@ public function saveit(Request $request, $id) {
 
     return response()->json(['message' => $saved ? 'Book unfavorited' : 'Book favorited']);
 }
-    public function deletebook(Request $request){
-        $validator = Validator::make($request->all(),[
-            "id"=>"required|integer|exists:books,id",
-        ]);
-        if($validator->fails()){
-            return Response()->json(["error"=>$validator->errors()],422);
-        }
-        $id= $request->input('id');
+    public function deletebook(Request $request,$id){
+   
         $book= Book::find($id);
         if(!$book){
             return Response()->json(["error"=>"Book not found"] , 404);
         }
-        try{
-            $book->delete();
+        if (auth()->user()->id !== $book->user_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        
+            $book->status = Book::STATUS_PENDING_DELETION ;
+            $book->save();
             return Response()->json([
                 "message"=>"Book deleted sucessfully"
             ],200);
-        }
-        catch(\Exception $e){
-            return Response()->json([
-                "error"=>"an error occured while deleting this book",
-                "details"=>$e->getMessage(),
-            ],500);
-            
-        }
+        
     }
+    public function moddeletebook(Request $request, $id){
+ 
+  
+        
+        $book= Book::find($id);
+        if(!$book){
+            return Response()->json(["error"=>"Book not found"] , 404);
+        }
 
+        
+            $book->status = Book::STATUS_DELETED ;
+            $book->save();
+            return Response()->json([
+                "message"=>"Book deleted sucessfully"
+            ],200);
+        
+    }
    
     public function updateBook(Request $request, $id)
 {
-    Log::info('Request Data:', $request->all());
     $rules = [
         "title" => "required|string|max:16",
         "description" => "nullable|string|max:100",

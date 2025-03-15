@@ -22,6 +22,7 @@ Route::middleware(['auth:sanctum','citizen'])->group(function () {
     Route::put('/type/{id}' , [TypeController::class , 'update']);
     Route::put('/book/{id}' , [BookController::class , 'updateBook']);
     Route::put('/author/{id}' , [AuthorController::class , 'update']);
+    Route::delete('/book/mod/{id}/delete' , [BookController::class , 'moddeletebook']);
 
 });
 Route::middleware(['auth:sanctum' , 'king'])->group(function(){
@@ -38,7 +39,7 @@ Route::middleware(['auth:sanctum' ])->group(function(){
     Route::put('/book/{id}/update-pages' , [BookController::class , 'updatePagesRead']);
     Route::post('/book/{id}/favorite' , [BookController::class , 'favoriteit']);
     Route::post('/book/{id}/save' , [BookController::class , 'saveit']);
-    
+    Route::delete('/book/{id}/delete' , [BookController::class , 'deletebook']);
     Route::get('/books/read' , [BookController::class , 'Get_Reading_Books']);
     Route::get('/books/readed' , [BookController::class , 'Get_Readed_Books']);
     Route::get('/books/saved' , [BookController::class , 'Get_Saved_Books']);
